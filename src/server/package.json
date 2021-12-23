@@ -12,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "fastify": "^3.25.1",
+    "lodash": "^4.17.21",
     "typescript": "^4.5.4"
   },
   "devDependencies": {
