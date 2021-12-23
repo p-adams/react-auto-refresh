@@ -1,5 +1,15 @@
 .App {
-  text-align: center;
+  padding: 12px;
 }
-:root {
+
+nav ul {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+}
+
+nav ul li {
+  margin-right: 10px;
 }
