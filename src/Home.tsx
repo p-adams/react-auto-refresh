@@ -1,24 +1,62 @@
 import { useEffect, useState } from "react";
-import { useQuery, useQueryClient } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
+interface Candidate {
+  id: string;
+  name: string;
+}
+interface Vote {
+  email: string;
+  location?: string;
+  candidate?: Candidate;
+}
 function Home() {
   const queryClient = useQueryClient();
-  const query = useQuery<Array<{ id?: string; name: string }>>(
-    "candidates",
-    getCandidates
-  );
+  const query = useQuery<Array<Candidate>>("candidates", getCandidates);
 
-  const [currentCandidate, setCurrentCandidate] =
-    useState<{ id?: string; name: string }>();
+  const mutation = useMutation(vote, {});
+
+  const [currentCandidate, setCurrentCandidate] = useState<Candidate>();
+  const [email, setEmail] = useState("john@smith.com");
 
   async function getCandidates() {
     return await fetch("/api/candidates").then((res) => res.json());
   }
+  async function vote() {
+    console.log(email, currentCandidate);
+    await fetch("/api/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        data: {
+          email,
+          candidate: currentCandidate,
+        },
+      }),
+    });
+  }
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
-      <form style={{ margin: "0 auto" }}>
+      <form
+        style={{ margin: "0 auto" }}
+        onSubmit={(e) => {
+          e.preventDefault();
+          vote();
+        }}
+      >
         <h2>Cast Your Vote for The Next Mayor of Bedrock</h2>
-        <input type="email" />
-        <ul style={{ marginTop: "10px" }}>
+        <label>
+          <h4>Email</h4>
+          <input
+            type="email"
+            placeholder="Enter email"
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value);
+            }}
+          />
+        </label>
+
+        <ul style={{ margin: "10px 0 10px 0" }}>
           {query.data?.map((candidate) => {
             return (
               <li key={candidate.id}>
