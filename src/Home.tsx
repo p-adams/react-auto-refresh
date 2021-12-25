@@ -1,22 +1,25 @@
 import { useEffect, useState } from "react";
+import { useQuery, useQueryClient } from "react-query";
 function Home() {
-  const [candidates, setCandidates] = useState<
-    Array<{ id?: string; name: string }>
-  >([]);
+  const queryClient = useQueryClient();
+  const query = useQuery<Array<{ id?: string; name: string }>>(
+    "candidates",
+    getCandidates
+  );
+
   const [currentCandidate, setCurrentCandidate] =
     useState<{ id?: string; name: string }>();
-  useEffect(() => {
-    fetch("/api/candidates")
-      .then((res) => res.json())
-      .then((res) => setCandidates(res));
-  }, []);
+
+  async function getCandidates() {
+    return await fetch("/api/candidates").then((res) => res.json());
+  }
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
       <form style={{ margin: "0 auto" }}>
         <h2>Cast Your Vote for The Next Mayor of Bedrock</h2>
         <input type="email" />
         <ul style={{ marginTop: "10px" }}>
-          {candidates.map((candidate) => {
+          {query.data?.map((candidate) => {
             return (
               <li key={candidate.id}>
                 <label onClick={() => setCurrentCandidate(candidate)}>
