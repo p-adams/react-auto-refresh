@@ -41,7 +41,6 @@ server.get("/", async (req, res) => {
   return { msg: "Meow" };
 });
 server.post<{ Body: FormType }>("/", (req, reply) => {
-  //console.log(req);
   const { data } = req.body;
   const existingVote = votes.find((vote) => vote.email === data.email);
   if (!existingVote) {

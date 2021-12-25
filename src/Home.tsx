@@ -22,7 +22,6 @@ function Home() {
     return await fetch("/api/candidates").then((res) => res.json());
   }
   async function vote() {
-    console.log(email, currentCandidate);
     await fetch("/api/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
