@@ -1,6 +1,12 @@
 import Fastify, { FastifyInstance } from "fastify";
+import { v4 as uuidv4 } from "uuid";
 const server: FastifyInstance = Fastify({});
 const votes: Array<FormData> = [];
+const candidates: Array<{ id?: string; name: string }> = [
+  { name: "Fred Flintstone" },
+  { name: "Wilma Flintstone" },
+  { name: "Mr Slate" },
+].map((candidate) => ({ ...candidate, id: uuidv4() }));
 
 /**
  * sample request:
@@ -14,6 +20,7 @@ const votes: Array<FormData> = [];
 	}
 }
  */
+
 interface FormData {
   email: string;
   candidate: {
@@ -25,6 +32,11 @@ interface FormData {
 interface FormType {
   data: FormData;
 }
+
+server.get("/candidates", (req, res) => {
+  res.send(candidates);
+});
+
 server.get("/", async (req, res) => {
   return { msg: "Meow" };
 });
