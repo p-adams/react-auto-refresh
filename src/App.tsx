@@ -14,7 +14,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
-          <Route path="results" element={<Results />} />
+          <Route path="results/:id" element={<Results />} />
 
           <Route path="*" element={<NoMatch />} />
         </Route>

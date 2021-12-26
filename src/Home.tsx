@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useNavigate } from "react-router-dom";
+
 interface Candidate {
   id: string;
   name: string;
@@ -12,10 +13,10 @@ interface Vote {
 }
 function Home() {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
+  //const queryClient = useQueryClient();
   const query = useQuery<Array<Candidate>>("candidates", getCandidates);
 
-  const mutation = useMutation(vote, {});
+  //const mutation = useMutation(vote, {});
 
   const [currentCandidate, setCurrentCandidate] = useState<Candidate>();
   const [email, setEmail] = useState("john@smith.com");
@@ -24,8 +25,8 @@ function Home() {
     return await fetch("/api/candidates").then((res) => res.json());
   }
   async function vote() {
-    await fetch("/api/", {
-      method: "POST",
+    const { id } = await fetch("/api/", {
+      method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         data: {
@@ -33,10 +34,10 @@ function Home() {
           candidate: currentCandidate,
         },
       }),
-    });
-    // TODO send voter ID as param
-    navigate("/results");
+    }).then((res) => res.json());
+    navigate(`results/${id}`);
   }
+
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
       <form

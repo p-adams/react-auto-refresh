@@ -22,6 +22,7 @@ const candidates: Array<{ id?: string; name: string }> = [
  */
 
 interface FormData {
+  _id: string;
   email: string;
   candidate: {
     id: string;
@@ -40,14 +41,16 @@ server.get("/candidates", (req, res) => {
 server.get("/", async (req, res) => {
   return { msg: "Meow" };
 });
-server.post<{ Body: FormType }>("/", (req, reply) => {
+server.put<{ Body: FormType }>("/", (req, reply) => {
   const { data } = req.body;
-  const existingVote = votes.find((vote) => vote.email === data.email);
+  data._id = uuidv4();
+  const existingVote = votes.find((vote) => vote._id === data._id);
   if (!existingVote) {
     votes.push(data);
+    reply.send({ id: data._id, status: 200 });
+    return;
   }
-
-  reply.send({ status: 200 });
+  reply.send({ err: "Error: Vote already cast." });
 });
 
 async function main() {
