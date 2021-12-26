@@ -51,7 +51,6 @@ function Home() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
-      {JSON.stringify(mutation.isError)}
       <form
         style={{ margin: "0 auto" }}
         onSubmit={(e) => {
