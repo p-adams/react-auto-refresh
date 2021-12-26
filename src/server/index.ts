@@ -43,14 +43,14 @@ server.get("/", async (req, res) => {
 });
 server.put<{ Body: FormType }>("/", (req, reply) => {
   const { data } = req.body;
-  data._id = uuidv4();
-  const existingVote = votes.find((vote) => vote._id === data._id);
+  const existingVote = votes.find((vote) => vote.email === data.email);
   if (!existingVote) {
+    data._id = uuidv4();
     votes.push(data);
     reply.send({ id: data._id, status: 200 });
     return;
   }
-  reply.send({ err: "Error: Vote already cast." });
+  reply.code(500).send({ message: "Error: Vote already cast." });
 });
 
 async function main() {

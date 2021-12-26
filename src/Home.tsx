@@ -13,38 +13,50 @@ interface Vote {
 }
 function Home() {
   const navigate = useNavigate();
-  //const queryClient = useQueryClient();
-  const query = useQuery<Array<Candidate>>("candidates", getCandidates);
-
-  //const mutation = useMutation(vote, {});
+  const [err, setErr] = useState("");
 
   const [currentCandidate, setCurrentCandidate] = useState<Candidate>();
   const [email, setEmail] = useState("john@smith.com");
+  //const queryClient = useQueryClient();
+  const query = useQuery<Array<Candidate>>(
+    "candidates",
+    async () => await fetch("/api/candidates").then((res) => res.json())
+  );
 
-  async function getCandidates() {
-    return await fetch("/api/candidates").then((res) => res.json());
-  }
-  async function vote() {
-    const { id } = await fetch("/api/", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        data: {
-          email,
-          candidate: currentCandidate,
-        },
-      }),
-    }).then((res) => res.json());
-    navigate(`results/${id}`);
-  }
+  const mutation = useMutation(
+    async (newVote: Vote) => {
+      return await fetch("/api/", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          data: newVote,
+        }),
+      }).then((res) => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          throw new Error("Error: Vote already cast.");
+        }
+      });
+    },
+    {
+      onSuccess: (res) => {
+        navigate(`results/${res.id}`);
+      },
+      onError: (err: any) => {
+        setErr(err.message);
+      },
+    }
+  );
 
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
+      {JSON.stringify(mutation.isError)}
       <form
         style={{ margin: "0 auto" }}
         onSubmit={(e) => {
           e.preventDefault();
-          vote();
+          mutation.mutate({ email, candidate: currentCandidate });
         }}
       >
         <h2>Cast Your Vote for The Next Mayor of Bedrock</h2>
@@ -77,6 +89,7 @@ function Home() {
           })}
         </ul>
         <button type="submit">Vote</button>
+        {mutation.isError && <div>{err}</div>}
       </form>
     </div>
   );
