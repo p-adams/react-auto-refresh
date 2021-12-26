@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useNavigate } from "react-router-dom";
 interface Candidate {
   id: string;
   name: string;
@@ -10,6 +11,7 @@ interface Vote {
   candidate?: Candidate;
 }
 function Home() {
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const query = useQuery<Array<Candidate>>("candidates", getCandidates);
 
@@ -32,6 +34,8 @@ function Home() {
         },
       }),
     });
+    // TODO send voter ID as param
+    navigate("/results");
   }
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
