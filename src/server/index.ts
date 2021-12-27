@@ -35,6 +35,8 @@ interface FormType {
   data: FormData;
 }
 
+let _t: NodeJS.Timeout;
+
 function processNewVote(voterData: FormData) {
   voterData.externalVoterId = uuidv4();
   voterData.isCounted = false;
@@ -43,7 +45,7 @@ function processNewVote(voterData: FormData) {
   /*
   artificially make counting vote operation slow to mimick expensive calculation
   */
-  setTimeout(() => {
+  _t = setTimeout(() => {
     // count vote
     voterData.isCounted = true;
   }, 10000);
@@ -70,10 +72,15 @@ server.get(
     // find and check status of vote
     const vote = votes.find((vote) => vote.externalVoterId === id);
     if (vote?.isCounted) {
-      res.send(votes);
+      // TODO return mapping of candidates to votes instead of raw votes list
+      res.send({ votes, vote });
       return;
     }
-    res.send({ status: "still processing votes" });
+    res.send({
+      message: "Still processing votes. Refresh browser to see updates.",
+      status: "processing",
+      vote,
+    });
   }
 );
 
@@ -82,9 +89,10 @@ server.get("/", async (req, res) => {
 });
 server.put<{ Body: FormType }>("/", (req, reply) => {
   const { data } = req.body;
+  // citizens of bedrock can only have a single email :)
   const existingVote = votes.find((vote) => vote.email === data.email);
   if (!existingVote) {
-    // initialize vote creation
+    // initialize voter creation
 
     const voter = processNewVote(data);
     // make external voter ID immediately available to client

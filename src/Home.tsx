@@ -18,6 +18,7 @@ function Home() {
   const [currentCandidate, setCurrentCandidate] = useState<Candidate>();
   const [email, setEmail] = useState("john@smith.com");
   //const queryClient = useQueryClient();
+  // TODO: consider moving to App so it can be shared by Home and Results
   const query = useQuery<Array<Candidate>>(
     "candidates",
     async () => await fetch("/api/candidates").then((res) => res.json())
