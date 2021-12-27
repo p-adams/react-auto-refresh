@@ -88,8 +88,7 @@ server.get(
       return;
     }
     res.send({
-      message: "Still processing votes. Refresh browser to see updates.",
-      status: "processing",
+      voteStatus: "processing",
       vote,
     });
   }
