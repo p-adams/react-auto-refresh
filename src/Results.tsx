@@ -9,7 +9,9 @@ function Results() {
     vote: Vote;
     candidates: Array<Candidate>;
     voteStatus: string;
-  }>("election-data", getElectionData);
+  }>("election-data", getElectionData, {
+    refetchInterval: 1000,
+  });
 
   async function getElectionData() {
     const { id } = params;
@@ -43,7 +45,7 @@ function Results() {
         </div>
         {data?.voteStatus === "processing" && (
           <div className="notification-wrapper">
-            Still processing votes. Refresh browser to see updates.
+            Our servers are busy processing your vote.
           </div>
         )}
         <div className="election-breakdown">
