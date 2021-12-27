@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 function Results() {
@@ -34,20 +34,29 @@ function Results() {
       {!error ? (
         <div>
           <div className="voter-information-card">
-            <h3>
-              {vote?.email}, you have submitted your vote for Mayor of Bedrock!
-            </h3>
-            <div>Candidate: {vote?.candidate?.name}</div>
+            <p>
+              <span>{vote?.email}</span>, you have submitted your vote for{" "}
+              <span>{vote?.candidate?.name}</span> as Mayor of Bedrock!
+            </p>
           </div>
           {notification && (
             <div className="notification-wrapper">{notification}</div>
           )}
           <div className="election-breakdown">
-            {candidates.map((candidate) => (
-              <div key={candidate.id}>
-                {candidate.name} - {candidate.votes}
+            {!!candidates.length && (
+              <div className="election-table">
+                <div className="table-col">Name</div>
+                <div className="table-col votes">Votes</div>
+                {candidates.map((candidate) => (
+                  <Fragment key={candidate.id}>
+                    <div className="table-row">{candidate.name}</div>
+                    <div className="table-row votes-column">
+                      {candidate.votes}
+                    </div>
+                  </Fragment>
+                ))}
               </div>
-            ))}
+            )}
           </div>
         </div>
       ) : (

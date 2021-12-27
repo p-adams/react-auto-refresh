@@ -17,3 +17,25 @@ ul {
   margin: 0;
   padding: 0;
 }
+
+.voter-information-card p span {
+  font-weight: bold;
+}
+
+.election-table {
+  border: 1px solid gray;
+  padding: 10px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.election-table .table-col.votes,
+.table-row.votes-column {
+  text-align: right;
+}
+
+.table-row {
+  padding: 4px;
+  margin: 10px 0 10px 0;
+  border-bottom: 1px solid black;
+}
