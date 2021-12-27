@@ -72,7 +72,9 @@ server.get(
     // find and check status of vote
     const vote = votes.find((vote) => vote.externalVoterId === id);
     if (vote?.isCounted) {
-      // TODO return mapping of candidates to votes instead of raw votes list
+      /* TODO return mapping of candidates to votes instead of raw votes list
+        electionBreakDown Array<{name: <string>, votes: <number>}>
+      */
       res.send({ votes, vote });
       return;
     }

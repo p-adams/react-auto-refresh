@@ -1,14 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-interface Candidate {
-  id: string;
-  name: string;
-}
-interface Vote {
-  email: string;
-  location?: string;
-  candidate?: Candidate;
-}
+
 function Results() {
   const params = useParams();
   const [notification, setNotification] = useState();

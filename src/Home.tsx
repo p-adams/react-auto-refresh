@@ -1,24 +1,14 @@
-import { useEffect, useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useState } from "react";
+import { useMutation, useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
 
-interface Candidate {
-  id: string;
-  name: string;
-}
-interface Vote {
-  email: string;
-  location?: string;
-  candidate?: Candidate;
-}
 function Home() {
   const navigate = useNavigate();
   const [err, setErr] = useState("");
 
   const [currentCandidate, setCurrentCandidate] = useState<Candidate>();
   const [email, setEmail] = useState("john@smith.com");
-  //const queryClient = useQueryClient();
-  // TODO: consider moving to App so it can be shared by Home and Results
+
   const query = useQuery<Array<Candidate>>(
     "candidates",
     async () => await fetch("/api/candidates").then((res) => res.json())
