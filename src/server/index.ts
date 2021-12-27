@@ -2,11 +2,11 @@ import Fastify, { FastifyInstance } from "fastify";
 import { v4 as uuidv4 } from "uuid";
 const server: FastifyInstance = Fastify({});
 const votes: Array<FormData> = [];
-const candidates: Array<{ id?: string; name: string }> = [
+const candidates: Array<{ id?: string; name: string; votes: number }> = [
   { name: "Fred Flintstone" },
   { name: "Wilma Flintstone" },
   { name: "Mr Slate" },
-].map((candidate) => ({ ...candidate, id: uuidv4() }));
+].map((candidate) => ({ ...candidate, id: uuidv4(), votes: 0 }));
 
 /**
  * sample request:
@@ -71,11 +71,20 @@ server.get(
     const { id } = req.params as { id: string };
     // find and check status of vote
     const vote = votes.find((vote) => vote.externalVoterId === id);
+    if (!vote) {
+      res.code(500).send({ message: "Cannot find voter with that ID." });
+      return;
+    }
     if (vote?.isCounted) {
       /* TODO return mapping of candidates to votes instead of raw votes list
         electionBreakDown Array<{name: <string>, votes: <number>}>
       */
-      res.send({ votes, vote });
+      for (const candidate of candidates) {
+        candidate.votes = votes.filter(
+          (vote) => vote.candidate.id === candidate.id
+        ).length;
+      }
+      res.send({ vote, candidates });
       return;
     }
     res.send({
@@ -86,9 +95,6 @@ server.get(
   }
 );
 
-server.get("/", async (req, res) => {
-  return { msg: "Meow" };
-});
 server.put<{ Body: FormType }>("/", (req, reply) => {
   const { data } = req.body;
   // citizens of bedrock can only have a single email :)
